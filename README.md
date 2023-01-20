@@ -17,40 +17,13 @@ Zillow has many key data entries that can help in our prefiction models. Some of
 
 | Feature | Definition | Data Type |
 | ----- | ----- | ----- |
-| customer_id | Unique id for each customer| string |
-| senior_citizen| 1 if customer is a senior citizen, 0 if not | int |
-| tenure | Months of tenure as a customer| int |
-| monthly_charges| The customer's monthly bill| float |
-| total_charges| The customer's total bills since they have been a customer| float|
-| gender_encoded | 1 if the customer is male, 0 if not | int |
-| partner_encoded | 1 if the customer has a partner, 0 if not  | int |
-| dependents_encoded| 1 if the customer has dependents, 0 if not| int |
-| phone_service_encoded | 1 if the customer has phone service, 0 if not | int |
-| paperless_billing_encoded | 1 if the customer has paperliess billing, 0 if not | int |
-| multiple_lines_yes | 1 if the customer has multiple phone lines, 0 if not | int |
-| online_security_no | 1 if the customer has internet but no online security, 0 if not | int |
-| online_security_yes | 1 if the customer has online security add-on, 0 if not | int |
-| online_backup_no | 1 if the customer has internet but no online backup, 0 if not | int |
-| online_backup_yes | 1 if the customer has online backup, 0 if not | int |
-| device_protection_no | 1 if the customer has internet but no device protection, 0 if not | int |
-| device_protection_yes | 1 if the customer has device protection, 0 if not | int |
-| tech_support_no | 1 if the customer has internet but no tech support, 0 if not | int |
-| tech_support_yes | 1 if the customer has tech_support, 0 if not | int |
-| streaming_tv_no | 1 if the customer has internet but no streaming tv, 0 if not | int |
-| streaming_tv_yes | 1 if the customer has streaming tv, 0 if not | int |
-| streaming_movies_no | 1 if the customer has internet but no streaming movies, 0 if not | int |
-| streaming_movies_yes | 1 if the customer has streaming movies, 0 if not | int |
-| contract_type_one_year | 1 if the customer has a one year contract, 0 if not | int |
-| contract_type_two_year | 1 if the customer has a two year contract, 0 if not | int |
-| payment_type_bank_transfer_auto | 1 if the customer pays by automatic bank transfer, 0 if not | int
-| payment_type_credit_card_auto | 1 if the customer pays automatically by credit card, 0 if not | int
-| payment_type_electronic_check | 1 if the customer pays manually by electronic check, 0 if not | int
-| payment_type_mailed_check | 1 if the customer pays manually by mailed check, 0 if not | int
-| internet_type_dsl  | 1 if the customer has DSL internet service, 0 if not |  int
-| internet_type_fiber_optic | 1 if the customer has fiber optic internet service, 0 if not | int
-| internet_type_none | 1 if the customer has no internet | int
-| num_addons | sum of how many internet service add-ons the customer has | int
- 
+| year_built | Year the house was built| `int` |
+| property_value| Value of the property | `int` |
+| tax_amount | Tax amount paid throughout the year| `int` |
+| bedrooms| Total number of bedrooms the house has| `int`|
+| bathrooms| Total number of bathrooms the house has| `float` |
+| sqr_feet | Total square feet of the house | `float` |
+| fips |   | `int` |
 
 
 ------
@@ -62,7 +35,7 @@ My initial hypothesis is that bedroom count will be a huge preictor to property 
 # My Plan of Action
 
 + Aquire data from Codeup
-  - Use Sequel Ace to obtain, and filter for the needed data
+  - Use Sequel Ace to obtain, and filter for the needed data that we will use for the project.
   
 + Prepare the acquired data
   - Download and turn Zillow data into a .csv
