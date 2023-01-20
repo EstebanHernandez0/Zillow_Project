@@ -53,5 +53,5 @@ def wrangle_zillow():
     '''
     
     train, val, test = prep_zillow(get_zillow())
-    
+    print(train.shape), print(val.shape), print(test.shape)
     return train, val, test
