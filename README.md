@@ -23,7 +23,7 @@ Zillow has many key data entries that can help in our prefiction models. Some of
 | bedrooms| Total number of bedrooms the house has| `int`|
 | bathrooms| Total number of bathrooms the house has| `float` |
 | sqr_feet | Total square feet of the house | `float` |
-| fips |   | `int` |
+| fips |  County code | `int` |
 
 
 ------
