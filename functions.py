@@ -4,6 +4,14 @@ import os
 from env import get_connection
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.model_selection import train_test_split
+from scipy.stats import pearsonr, spearmanr
+from sklearn.preprocessing import MinMaxScaler 
+from sklearn.metrics import mean_squared_error, explained_variance_score
+from sklearn.linear_model import LinearRegression, LassoLars, TweedieRegressor
+from sklearn.preprocessing import PolynomialFeatures
+scaler= MinMaxScaler()
+
 
 
 def plot_box(train):
@@ -20,7 +28,6 @@ def plot_box(train):
 
         plot_number= x + 1 
 
-        
         # subplot.
         plt.subplot(1, len(cols), plot_number)
 
@@ -28,15 +35,12 @@ def plot_box(train):
         # Title name using the column names.
         plt.title(col)
 
-        
         # boxplot.
         sns.boxplot(data=train[[col]])
 
-        
         # turns off the grid lines.
         plt.grid(False)
 
-        
         # proper plot spacing
         plt.tight_layout()
 
@@ -67,8 +71,28 @@ def sqr_property(train):
     plt.ylabel('Total Property Value')
     plt.show()
     
+def bed_property():
+    sns.lmplot(data= train, x= 'bedrooms', y= 'property_value', scatter=True, line_kws={"color": "red"})
+    plt.title('Correlation Between Property Value and Bedrooms')
+    plt.xlabel('Total Bedrooms')
+    plt.ylabel('Total Property Value')
+    plt.show()
     
-def calc_baseline(y_train,y_validate):
+def year_property():
+    sns.lmplot(data= train, x= 'year_built', y= 'property_value', scatter=True, line_kws={"color": "red"})
+    plt.title('Correlation of Property Value and Year Built')
+    plt.xlabel('Year Built')
+    plt.ylabel('Total Property Value')
+    plt.show()
+    
+def bath_property():  
+    sns.lmplot(data= train, x= 'bathrooms', y= 'property_value',scatter=True, line_kws={"color": "red"}) 
+    plt.title('Correlation Between Property Value and Bathrooms')
+    plt.xlabel('Total Bathrooms')
+    plt.ylabel('Total Property Value')
+    plt.show()
+    
+def calc_baseline(y_train,y_val):
        
     y_train= pd.DataFrame(y_train)
     y_val= pd.DataFrame(y_val)
@@ -99,77 +123,6 @@ def calc_baseline(y_train,y_validate):
         
         
         
-def take_the_L(X_train_scaled, y_train, X_val_scaled, y_val):
-    '''
-    returns results for different model types for train and validate dataset
-    '''
-    pred_mean= y_train.tax_value.mean()
-    y_train['pred_mean']= pred_mean
-    y_validate['pred_mean']= pred_mean
-    rmse_train = mean_squared_error(y_train.tax_value, y_train.pred_mean, squared=False)
-    rmse_validate = mean_squared_error(y_validate.tax_value, y_validate.pred_mean, squared=False)
-
-    # save the results
-    metric_df= pd.DataFrame(data=[{
-        'model': 'baseline_mean',
-        'rmse_train': rmse_train,
-        'r2_train': explained_variance_score(y_train.tax_value, y_train.pred_mean),
-        'rmse_validate': rmse_validate,
-        'r2_validate': explained_variance_score(y_validate.tax_value, y_validate.pred_mean)
-        }])
-
-    #Linear Regression model
-    # run the model
-    lm= LinearRegression(normalize=True)
-    lm.fit(X_train_scaled, y_train.tax_value)
-    y_train['pred_lm']= lm.predict(X_train_scaled)
-    rmse_train = mean_squared_error(y_train.tax_value, y_train.pred_lm)**(1/2)
-    y_validate['pred_lm']= lm.predict(X_validate_scaled)
-    rmse_validate = mean_squared_error(y_validate.tax_value, y_validate.pred_lm)**(1/2)
-
-    # save the results
-    metric_df = metric_df.append({
-        'model': 'Linear Regression',
-        'rmse_train': rmse_train,
-        'r2_train': explained_variance_score(y_train.tax_value, y_train.pred_lm),
-        'rmse_validate': rmse_validate,
-        'r2_validate': explained_variance_score(y_validate.tax_value, y_validate.pred_lm)}, ignore_index=True)
-
-
-    # LassoLars Model
-    lars = LassoLars(alpha=4)
-    lars.fit(X_train_scaled, y_train.tax_value)
-    y_train['pred_lars'] = lars.predict(X_train_scaled)
-    rmse_train = mean_squared_error(y_train.tax_value, y_train.pred_lars, squared=False)
-    y_validate['pred_lars'] = lars.predict(X_validate_scaled)
-    rmse_validate = mean_squared_error(y_validate.tax_value, y_validate.pred_lars, squared=False)
-
-    # save the results
-    metric_df = metric_df.append({
-        'model': 'LarsLasso, alpha 4',
-        'rmse_train': rmse_train,
-        'r2_train': explained_variance_score(y_train.tax_value, y_train.pred_lars),
-        'rmse_validate': rmse_validate,
-        'r2_validate': explained_variance_score(y_validate.tax_value, y_validate.pred_lars)}, ignore_index=True)
-
-    # create the model object
-    glm = TweedieRegressor(power=0, alpha=0)
-    glm.fit(X_train_scaled, y_train.tax_value)
-    y_train['glm_pred'] = glm.predict(X_train_scaled)
-    rmse_train = mean_squared_error(y_train.tax_value, y_train.glm_pred)**(1/2)
-    y_validate['glm_pred'] = glm.predict(X_validate_scaled)
-    rmse_validate = mean_squared_error(y_validate.tax_value, y_validate.glm_pred)**(1/2)
-
-
-    # save the results
-    metric_df= metric_df.append({
-        'model': 'Tweedie Regressor',
-        'rmse_train': rmse_train,
-        'r2_train': explained_variance_score(y_train.tax_value, y_train.glm_pred),
-        'rmse_validate': rmse_validate,
-        'r2_validate': explained_variance_score(y_validate.tax_value, y_validate.glm_pred)}, ignore_index=True)
-
-    return metric_df
 
 
 def six_split(train, val, test):
@@ -212,3 +165,75 @@ def mmscale(X_train, X_val, X_test):
     
 
     return X_train_scaled, X_val_scaled, X_test_scaled
+
+def take_the_L(X_train_scaled, y_train,X_val_scaled, y_val):
+    '''
+    returns results for different model types for train and validate dataset
+    '''
+    pred_mean= y_train.property_value.mean()
+    y_train['pred_mean']= pred_mean
+    y_val['pred_mean']= pred_mean
+    rmse_train = mean_squared_error(y_train.property_value, y_train.pred_mean, squared= False)
+    rmse_val = mean_squared_error(y_val.property_value, y_val.pred_mean, squared= False)
+
+    # save the results
+    metric_df= pd.DataFrame(data= [{
+        'model': 'baseline_mean',
+        'rmse_train': rmse_train,
+        'r2_train': explained_variance_score(y_train.property_value, y_train.pred_mean),
+        'rmse_validate': rmse_val,
+        'r2_validate': explained_variance_score(y_val.property_value, y_val.pred_mean)
+        }])
+
+    #Linear Regression model
+    # run the model
+    lm= LinearRegression(normalize= True)
+    lm.fit(X_train_scaled, y_train.property_value)
+    y_train['pred_lm']= lm.predict(X_train_scaled)
+    rmse_train = mean_squared_error(y_train.property_value, y_train.pred_lm)**(1/2)
+    y_val['pred_lm']= lm.predict(X_val_scaled)
+    rmse_val= mean_squared_error(y_val.property_value, y_val.pred_lm)**(1/2)
+
+    # save the results
+    metric_df= metric_df.append({
+        'model': 'Linear Regression',
+        'rmse_train': rmse_train,
+        'r2_train': explained_variance_score(y_train.property_value, y_train.pred_lm),
+        'rmse_validate': rmse_val,
+        'r2_validate': explained_variance_score(y_val.property_value, y_val.pred_lm)}, ignore_index= True)
+
+
+    # LassoLars Model
+    lars= LassoLars(alpha= 3)
+    lars.fit(X_train_scaled, y_train.property_value)
+    y_train['pred_lars']= lars.predict(X_train_scaled)
+    rmse_train= mean_squared_error(y_train.property_value, y_train.pred_lars, squared= False)
+    y_val['pred_lars']= lars.predict(X_val_scaled)
+    rmse_val= mean_squared_error(y_val.property_value, y_val.pred_lars, squared= False)
+
+    # save the results
+    metric_df= metric_df.append({
+        'model': 'LarsLasso, alpha 4',
+        'rmse_train': rmse_train,
+        'r2_train': explained_variance_score(y_train.property_value, y_train.pred_lars),
+        'rmse_validate': rmse_val,
+        'r2_validate': explained_variance_score(y_val.property_value, y_val.pred_lars)}, ignore_index= True)
+
+    # create the model object
+    glm= TweedieRegressor(power= 0, alpha= 0)
+    glm.fit(X_train_scaled, y_train.property_value)
+    y_train['glm_pred']= glm.predict(X_train_scaled)
+    rmse_train= mean_squared_error(y_train.property_value, y_train.glm_pred)**(1/2)
+    y_val['glm_pred']= glm.predict(X_val_scaled)
+    rmse_val= mean_squared_error(y_val.property_value, y_val.glm_pred)**(1/2)
+
+
+    # save the results
+    metric_df= metric_df.append({
+        'model': 'Tweedie Regressor',
+        'rmse_train': rmse_train,
+        'r2_train': explained_variance_score(y_train.property_value, y_train.glm_pred),
+        'rmse_validate': rmse_val,
+        'r2_validate': explained_variance_score(y_val.property_value, y_val.glm_pred)}, ignore_index= True)
+
+    return metric_df
